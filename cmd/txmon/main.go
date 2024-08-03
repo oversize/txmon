@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	ouroboros "github.com/blinklabs-io/gouroboros"
 	"github.com/blinklabs-io/gouroboros/ledger"
@@ -37,11 +38,13 @@ func getTransactions(oConn *ouroboros.Connection) {
 		return
 	}
 
-	oConn.LocalTxMonitor().Client.Start()
 	for {
 		txRawBytes, err := oConn.LocalTxMonitor().Client.NextTx()
 		if err != nil {
 			fmt.Print(err.Error())
+		}
+		if len(txRawBytes) == 0 {
+			return
 		}
 		// size := len(txRawBytes)
 		// fmt.Printf("Transaction Bytes %s", size)
@@ -50,6 +53,7 @@ func getTransactions(oConn *ouroboros.Connection) {
 			fmt.Print(err.Error())
 			return
 		}
+
 		tx, err := ledger.NewTransactionFromCbor(txType, txRawBytes)
 		if err != nil {
 			fmt.Print(err.Error())
@@ -74,6 +78,20 @@ func main() {
 	if err != nil {
 		fmt.Printf("failed to connect to node: %s", err)
 	}
-	// time.Sleep(1)
-	getTransactions(oConn)
+
+	for {
+
+		// fmt.Println("Next")
+		err = oConn.LocalTxMonitor().Client.Acquire()
+		if err != nil {
+			fmt.Println("failed to acquire mempool")
+		}
+		getTransactions(oConn)
+		err = oConn.LocalTxMonitor().Client.Release()
+		if err != nil {
+			fmt.Println("failed to release acquired mempool")
+		}
+		time.Sleep(time.Millisecond * 200)
+	}
+
 }
