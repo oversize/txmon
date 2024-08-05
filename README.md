@@ -14,3 +14,8 @@ TXMon connects to the local node and creates a sample of the current mempool
 contents. It stores the transactions ids it sees and when it saw them first.
 
 
+
+## Golang Resources
+
+https://github.com/sikozonpc/go-rest-api
+
