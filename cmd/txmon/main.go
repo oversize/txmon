@@ -31,6 +31,7 @@ func main() {
 	}
 }
 
+// rootCommand
 func rootCommand(cmd *cobra.Command, args []string) {
 	errorChan := make(chan error)
 	go func() {

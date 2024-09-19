@@ -8,6 +8,8 @@ import (
 	"github.com/blinklabs-io/gouroboros/ledger"
 )
 
+// GetConnection tries to connect to the cardano-node and returns
+// that connection.
 func GetConnection(errorChan chan error) (*ouroboros.Connection, error) {
 	// Creates the Connection using oruouprbs new
 	oConn, err := ouroboros.NewConnection(
